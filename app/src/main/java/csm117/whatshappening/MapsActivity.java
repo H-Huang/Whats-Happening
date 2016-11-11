@@ -1,5 +1,6 @@
 package csm117.whatshappening;
 
+import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -38,7 +39,14 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
-        
+
+        //needs to fix those permissions errors, but now we can't support lower APIs
+        if (locationManager != null) {
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                locationManager.removeUpdates(MapsActivity.this);
+            }
+        }
 
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
