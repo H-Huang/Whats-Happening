@@ -17,6 +17,6 @@
     -->
     //put your API key here!
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-
+        AIzaSyCsuTAsL1MPN9XTmrcPdkznm6zPKvo3B8o
     </string>
 </resources>
