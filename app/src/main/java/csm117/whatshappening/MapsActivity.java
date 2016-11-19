@@ -58,16 +58,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
     }
 
-    // Function to display the message that the user enters
-    public final static String EXTRA_MESSAGE = "hello";
-    public void sendMessage(View view) {
-        Intent display = new Intent(this, MainActivity.class);
-        EditText editText = (EditText) findViewById(R.id.edit_message);
-        String message = editText.getText().toString();
-        display.putExtra(EXTRA_MESSAGE, message);
-        startActivity(display);
-    }
-
     @Override
     public void onLocationChanged(Location location) {
         TextView locationTv = (TextView) findViewById(R.id.latlongLocation);
