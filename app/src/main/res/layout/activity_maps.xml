@@ -35,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:id="@+id/floatingAdd" />
+            android:id="@+id/floatingAdd"
+            />
 
     </android.support.design.widget.CoordinatorLayout>
 
