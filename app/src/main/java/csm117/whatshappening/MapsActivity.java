@@ -1,5 +1,6 @@
 package csm117.whatshappening;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +12,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -53,6 +56,16 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+    }
+
+    // Function to display the message that the user enters
+    public final static String EXTRA_MESSAGE = "hello";
+    public void sendMessage(View view) {
+        Intent display = new Intent(this, MainActivity.class);
+        EditText editText = (EditText) findViewById(R.id.edit_message);
+        String message = editText.getText().toString();
+        display.putExtra(EXTRA_MESSAGE, message);
+        startActivity(display);
     }
 
     @Override
