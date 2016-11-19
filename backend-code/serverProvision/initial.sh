@@ -14,13 +14,13 @@ sudo apt-get install python3.4-dev -y
 
 # Nginx setup
 sudo apt-get install nginx -y
-sudo mv ./$1 /etc/nginx/sites-available/$1
+sudo mv /vagrant/What\'sHappening/backend-code/DjangoBackend/serverProvision/$1 /etc/nginx/sites-available/$1
 sudo ln -s /etc/nginx/sites-available/$1 /etc/nginx/sites-enabled
 sudo service nginx restart
 
 #supervisor setup
 sudo apt-get install supervisor -y
-sudo cp ./gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
+sudo cp /vagrant/What\'sHappening/backend-code/DjangoBackend/serverProvision/gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
 sudo service supervisor restart
 
 #postgresql
