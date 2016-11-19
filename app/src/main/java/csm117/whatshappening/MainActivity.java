@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //
         CREATE_NOTE = getString(R.string.create_location_notes);
         GET_NOTE = getString(R.string.get_location_notes);
 
@@ -109,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
                 HashMap<String, String> params = new HashMap<String, String>();
+                // Just 5 parameters for hashing
                 params.put("created", "2016-11-13T03:53:17.826999Z");
-                params.put("title", "post");
                 params.put("description", "plz-post");
                 params.put("latitude", "100");
                 params.put("longitude", "200");
