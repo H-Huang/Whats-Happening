@@ -3,4 +3,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="create_location_notes">http://192.168.11.11/locationnotes/</string>
     <string name="get_location_notes">http://192.168.11.11/locationnotes/</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
 </resources>
