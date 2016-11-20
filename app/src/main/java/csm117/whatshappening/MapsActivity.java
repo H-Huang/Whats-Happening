@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements LocationListener {
 
     GoogleMap googleMap;
+    double latitude;
+    double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         floatingAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent inputWindow = new Intent(getApplicationContext(), InputActivity.class);
+                inputWindow.putExtra("paramLat", "" + latitude);
+                inputWindow.putExtra("paramLong", "" + longitude);
                 startActivity(inputWindow);
             }
         });
@@ -90,14 +94,15 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         TextView locationTv = (TextView) findViewById(R.id.latlongLocation);
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
     }
+
 
     @Override
     public void onProviderDisabled(String provider) {
