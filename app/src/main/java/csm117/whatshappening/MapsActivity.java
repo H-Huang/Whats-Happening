@@ -1,35 +1,68 @@
 package csm117.whatshappening;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import java.util.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
-public class MapsActivity extends FragmentActivity implements LocationListener {
+public class MapsActivity extends FragmentActivity implements
+        LocationListener,
+        OnMapReadyCallback {
+
+
+    private String CREATE_NOTE = "";
+    private String GET_NOTE = "";
 
     GoogleMap googleMap;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +75,33 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = supportMapFragment.getMap();
+        // Sync map, implement onMapReady
+        supportMapFragment.getMapAsync(this);
         googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
 
+
         if (locationManager != null) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.removeUpdates(MapsActivity.this);
             }
         }
 
-        Location location = locationManager.getLastKnownLocation(bestProvider);
+        // Commented out for now to work on the emulator
+        /*Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        */
 
-        // Create FAB variable, implement an OnClickListener and cause it to create an intent and start the InputActivity
+        // Create FAB variable, implement an OnClickListener
+        // and cause it to create an intent and start the InputActivity
         final FloatingActionButton floatingAdd = (FloatingActionButton) findViewById(R.id.floatingAdd);
         assert floatingAdd != null;
         floatingAdd.setOnClickListener(new View.OnClickListener() {
@@ -70,21 +111,9 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             }
         });
 
-        String newString;
-        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                newString= null;
-            } else {
-                newString= extras.getString("hello");
-                TextView textView = (TextView) findViewById(R.id.viewMessage);
-                textView.setText(newString);
-            }
-        } else {
-            newString= (String) savedInstanceState.getSerializable("hello");
-            TextView textView = (TextView) findViewById(R.id.viewMessage);
-            textView.setText(newString);
-        }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -98,6 +127,182 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
     }
+
+    // onMapReady, load marker
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+
+        ArrayList<LatLng> allLonLats = getLocations();
+        // add all pre-existing markers to the map
+        Marker[] otherMarkers = addAllMarkers(allLonLats, map);
+
+        // Test marker
+        Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905))
+                .title("Hello world"));
+
+        //test.setTag();
+
+        //googleMap.setOnMarkerClickListener(this);
+    }
+
+    private void createLocation(){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CREATE_NOTE,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(MapsActivity.this,response,Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MapsActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                HashMap<String, String> params = new HashMap<String, String>();
+                // Just 5 parameters for hashing
+                params.put("created", "2016-11-13T03:53:17.826999Z");
+                params.put("description", "plz-post");
+                params.put("latitude", "100");
+                params.put("longitude", "200");
+                params.put("upvotes", "30");
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+
+
+    /**
+     * Retrieve all the locations of events posted from other users
+     * from the database;
+     * returns an arraylist of longitude and latitude for each of the locations
+     */
+    private ArrayList<LatLng> getLocations(){
+
+        final ArrayList<JSONArray> result = new ArrayList<JSONArray>();
+
+        JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET,
+                GET_NOTE, (String)null,
+                new Response.Listener<JSONArray>()
+                {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        result.add(response);
+                        Log.d("Response", response.toString());
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Error.Response", error.toString());
+                    }
+                }
+        );
+
+        // store all the lat/lons for pre-existing events in databse
+        ArrayList<LatLng> allLatLons = new ArrayList<LatLng>();
+        JSONArray allEvents = result.get(0);
+        for (int i = 0; i < allEvents.length(); i++) {
+            JSONObject eventInfo = null;
+            try {
+                eventInfo = allEvents.getJSONObject(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            // get the necessary info from each of the JSONObjects
+            // Variable Names: Title, Description, Latitude, Longitude, etc.
+            try {
+                String title    = eventInfo.getString("Title");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                String descrip  = eventInfo.getString("Description");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            int lat         = 0;
+            try {
+                lat = eventInfo.getInt("Latitude");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            int lon         = 0;
+            try {
+                lon = eventInfo.getInt("Longitude");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            // store in allLatLons
+            LatLng eventLoc = new LatLng(lat, lon);
+            allLatLons.add(eventLoc);
+        }
+
+
+        //////////////////////////////////////////////////////////
+        int socketTimeout = 6000; // 30 seconds. You can change it
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        getRequest.setRetryPolicy(policy);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(getRequest);
+        /////////////////////////////////////////////////////////
+
+        return allLatLons;
+
+    } // end getLocations()
+
+
+    /**
+     * Adds all markers corresponding to locations extracted from the database
+     */
+    private Marker[] addAllMarkers(ArrayList<LatLng> locs, GoogleMap map) {
+
+        int numMarkers = locs.size();
+        Marker[] mapMarkers = new Marker[numMarkers];
+
+        for (int i = 0; i < numMarkers; i++) {
+            Marker marker_i = map.addMarker(new MarkerOptions().position(locs.get(i)));
+            mapMarkers[i] = marker_i;
+        }
+
+        return mapMarkers;
+    } // end addAllMarkers()
+
+
+    /*
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        // Retrieve the data from the marker.
+        Integer clickCount = (Integer) marker.getTag();
+
+        // Check if a click count was set, then display the click count.
+        if (clickCount != null) {
+            clickCount = clickCount + 1;
+            marker.setTag(clickCount);
+            Toast.makeText(this,
+                    marker.getTitle() +
+                            " has been clicked " + clickCount + " times.",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
+    }
+    */
 
     @Override
     public void onProviderDisabled(String provider) {
@@ -122,5 +327,41 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
             return false;
         }
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Maps Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }
