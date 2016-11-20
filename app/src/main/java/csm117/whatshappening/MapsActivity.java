@@ -54,37 +54,36 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         OnMarkerClickListener{
 
-
+    // Strings for IP address
     private String CREATE_NOTE = "";
     private String GET_NOTE = "";
 
+    // Declaration for use with Google Maps API
     GoogleMap googleMap;
-
     double longitude, latitude;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //show error dialog if GooglePlayServices not available
+        // Show error dialog if GooglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
+
         setContentView(R.layout.activity_maps);
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = supportMapFragment.getMap();
+
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
-        googleMap.setMyLocationEnabled(true);
+
+        // Can't set this to true without runtime permissions
+        googleMap.setMyLocationEnabled(false);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
-
 
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(this,
@@ -147,14 +146,13 @@ public class MapsActivity extends FragmentActivity implements
         // Marker[] otherMarkers = addAllMarkers(allLonLats, map);
         int i = 0;
         for (LatLng lon_lat : allLonLats) {
-            System.out.println(eventNames.get(i));
             String eventTitle = eventNames.get(i);
-            Marker loc_i = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -117.452905)).title(eventTitle));
+            map.addMarker(new MarkerOptions().position(lon_lat).title(eventTitle));
             i++;
         }
 
         // Test marker
-        //Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905)).title("Hello world"));
+        Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905)).title("Hello world"));
 
         googleMap.setOnMarkerClickListener(this);
     }
