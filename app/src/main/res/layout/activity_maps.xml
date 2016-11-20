@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:id="@+id/floatingAdd"
-            />
+            app:backgroundTint="@android:color/holo_blue_dark" />
 
     </android.support.design.widget.CoordinatorLayout>
 
