@@ -98,6 +98,23 @@ public class MapsActivity extends FragmentActivity implements
         CREATE_NOTE = getString(R.string.create_location_notes);
         GET_NOTE = getString(R.string.get_location_notes);
 
+
+        final ArrayList<String> eventNames = new ArrayList<String>();
+        final ArrayList<LatLng> allLonLats = getLocations(eventNames);
+        // add all pre-existing markers to the map
+        // Marker[] otherMarkers = addAllMarkers(allLonLats, googleMap);
+
+        int i = 0;
+        System.out.println("IN ON CREATE -- ABOUT TO START ITERATION OF LON LATS");
+        System.out.println("Size of the location arraylist: " + allLonLats.size());
+        for (LatLng lon_lat : allLonLats) {
+            String eventTitle = eventNames.get(i);
+            System.out.println("ITERATION " + i + "Event name: " + eventTitle);
+            Marker loc_i = googleMap.addMarker(new MarkerOptions().position(lon_lat)
+                    .title(eventTitle));
+            i++;
+        }
+
         // Commented out for now to work on the emulator
         /*Location location = locationManager.getLastKnownLocation(bestProvider);
         Location location = locationManager.getLastKnownLocation(bestProvider);
@@ -141,17 +158,6 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        final ArrayList<String> eventNames = new ArrayList<String>();
-        ArrayList<LatLng> allLonLats = getLocations(eventNames);
-        // add all pre-existing markers to the map
-        // Marker[] otherMarkers = addAllMarkers(allLonLats, map);
-        int i = 0;
-        for (LatLng lon_lat : allLonLats) {
-            System.out.println(eventNames.get(i));
-            String eventTitle = eventNames.get(i);
-            Marker loc_i = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -117.452905)).title(eventTitle));
-            i++;
-        }
 
         // Test marker
         //Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905)).title("Hello world"));
@@ -228,10 +234,13 @@ public class MapsActivity extends FragmentActivity implements
 
                             // store in allLatLons
                             LatLng eventLoc = new LatLng(lat, lon);
-                            System.out.println("Event " + i + "Lat: " + lat + " Lon: " + lon);
+                            System.out.println("Event " + i + " Lat: " + lat + " Lon: " + lon);
 
                             eventNames.add(title);
                             allLatLons.add(eventLoc);
+
+                            googleMap.addMarker(new MarkerOptions().position(eventLoc)
+                                    .title(title));
                         }
                     }
                 },
@@ -256,6 +265,7 @@ public class MapsActivity extends FragmentActivity implements
         requestQueue.add(getRequest);
         /////////////////////////////////////////////////////////
 
+        System.out.println("EXITING GET LOCATIONS... SIZE OF LOCATION ARRAYLIST: " + allLatLons.size());
         return allLatLons;
 
     } // end getLocations()
