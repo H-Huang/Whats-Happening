@@ -80,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements
         googleMap = supportMapFragment.getMap();
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
-        googleMap.setMyLocationEnabled(true);
+        googleMap.setMyLocationEnabled(false);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
@@ -148,7 +148,6 @@ public class MapsActivity extends FragmentActivity implements
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
-        //googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
@@ -276,36 +275,6 @@ public class MapsActivity extends FragmentActivity implements
         startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
         // Return false means we have not consumed event, default behavior will continue
         return false;
-    }
-
-    private void createLocation(){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CREATE_NOTE,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MapsActivity.this,response,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MapsActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                HashMap<String, String> params = new HashMap<String, String>();
-                // Just 5 parameters for hashing
-                params.put("created", "2016-11-13T03:53:17.826999Z");
-                params.put("description", "plz-post");
-                params.put("latitude", "100");
-                params.put("longitude", "200");
-                params.put("upvotes", "30");
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
     }
 
     @Override
