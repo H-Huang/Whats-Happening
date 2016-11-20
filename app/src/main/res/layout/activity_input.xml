@@ -12,13 +12,54 @@
     <EditText android:id="@+id/edit_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:inputType="text"
         android:hint="@string/edit_message" />
+
+    <TextView android:id="@+id/latText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/latText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/edit_message" />
+
+    <TextView android:id="@+id/longText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/longText"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/latValue"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText android:id="@+id/latValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:inputType="number"
+        android:text="@string/fakelatValue"
+        android:layout_below="@+id/latText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText android:id="@+id/longValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:inputType="number"
+        android:text="@string/fakelongValue"
+        android:layout_below="@+id/longText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:text="@string/button_send"
-        android:onClick="sendMessage"/>
+        android:onClick="sendMessage"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
