@@ -51,13 +51,16 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
 public class MapsActivity extends FragmentActivity implements
         LocationListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback,
+        OnMarkerClickListener{
 
 
     private String CREATE_NOTE = "";
     private String GET_NOTE = "";
 
     GoogleMap googleMap;
+
+    double longitude, latitude;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -94,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements
 
         // Commented out for now to work on the emulator
         /*Location location = locationManager.getLastKnownLocation(bestProvider);
+        Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
         }
@@ -107,6 +111,8 @@ public class MapsActivity extends FragmentActivity implements
         floatingAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent inputWindow = new Intent(getApplicationContext(), InputActivity.class);
+                inputWindow.putExtra("paramLat", "" + latitude);
+                inputWindow.putExtra("paramLong", "" + longitude);
                 startActivity(inputWindow);
             }
         });
@@ -119,10 +125,10 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
         TextView locationTv = (TextView) findViewById(R.id.latlongLocation);
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
-        googleMap.addMarker(new MarkerOptions().position(latLng));
+        //googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
@@ -140,6 +146,8 @@ public class MapsActivity extends FragmentActivity implements
         // Test marker
         Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905))
                 .title("Hello world"));
+
+        googleMap.setOnMarkerClickListener(this);
 
         //test.setTag();
 
@@ -278,6 +286,7 @@ public class MapsActivity extends FragmentActivity implements
             mapMarkers[i] = marker_i;
         }
 
+
         return mapMarkers;
     } // end addAllMarkers()
 
@@ -303,6 +312,17 @@ public class MapsActivity extends FragmentActivity implements
         return false;
     }
     */
+        // Test marker
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // When we click a marker, we want a pop up window
+        View HideFloating = findViewById(R.id.floatingAdd);
+        HideFloating.setVisibility(View.GONE);
+        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
+    }
 
     @Override
     public void onProviderDisabled(String provider) {

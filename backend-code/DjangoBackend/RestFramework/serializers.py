@@ -17,6 +17,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 class LocationNoteSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = LocationNote
         fields = ('created', 'title', 'description', 'latitude', 'longitude', 'upvotes', 'user')

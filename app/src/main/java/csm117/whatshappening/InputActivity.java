@@ -12,6 +12,14 @@ public class InputActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
+
+        Intent getLocation = getIntent();
+        String stringLat = getLocation.getStringExtra("paramLat");
+        String stringLong = getLocation.getStringExtra("paramLong");
+        EditText replacelatValue = (EditText) findViewById(R.id.latValue);
+        replacelatValue.setText(stringLat);
+        EditText replacelongValue = (EditText) findViewById(R.id.longValue);
+        replacelongValue.setText(stringLong);
     }
 
     public final static String EXTRA_MESSAGE = "hello";
