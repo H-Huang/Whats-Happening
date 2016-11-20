@@ -2,6 +2,7 @@ package csm117.whatshappening;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
 
-        final Button floatingAdd = (Button) findViewById(R.id.floatingAdd);
+        final FloatingActionButton floatingAdd = (FloatingActionButton) findViewById(R.id.floatingAdd);
         assert floatingAdd != null;
         floatingAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
