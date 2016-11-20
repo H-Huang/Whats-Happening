@@ -42,8 +42,6 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
-
-    private String CREATE_NOTE = "";
     private String GET_NOTE = "";
 
     @Override
@@ -51,30 +49,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //
-        CREATE_NOTE = getString(R.string.create_location_notes);
-        GET_NOTE = getString(R.string.get_location_notes);
-
         final Button map_redirect = (Button) findViewById(R.id.map_redirect);
         assert map_redirect != null;
         map_redirect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(),MapsActivity.class);
                 startActivity(i);
-            }
-        });
-
-        final Button create_note = (Button) findViewById(R.id.create_note);
-        assert create_note != null;
-        create_note.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String postReturnText = "please work";
-                createLocation();
-
-                Context context = getApplicationContext();
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, postReturnText, duration);
-                toast.show();
             }
         });
 
@@ -91,36 +71,6 @@ public class MainActivity extends AppCompatActivity {
 //                toast.show();
             }
         });
-    }
-
-    private void createLocation(){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CREATE_NOTE,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                HashMap<String, String> params = new HashMap<String, String>();
-                // Just 5 parameters for hashing
-                params.put("created", "2016-11-13T03:53:17.826999Z");
-                params.put("description", "plz-post");
-                params.put("latitude", "100");
-                params.put("longitude", "200");
-                params.put("upvotes", "30");
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
     }
 
     private void getLocations(){
@@ -153,6 +103,4 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(getRequest);
     }
-
-
 }

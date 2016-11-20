@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name">What\'s Happening</string>
     <string name="title_activity_maps">Map</string>
-    <string name="create_location_notes">http://192.168.11.11/locationnotes/</string>
-    <string name="get_location_notes">http://192.168.11.11/locationnotes/</string>
+    <string name="create_location_notes">http://138.68.24.232/locationnotes/</string>
+    <string name="get_location_notes">http://138.68.24.232/locationnotes/</string>
+    <string name="edit_title">Enter a title</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
 
     <string name="latText">Latitude</string>
     <string name="longText">Longitude</string>
-    <string name="fakelatValue">9</string>
-    <string name="fakelongValue">8</string>
+    <string name="fakelatValue">fake</string>
+    <string name="fakelongValue">fake</string>
 </resources>
