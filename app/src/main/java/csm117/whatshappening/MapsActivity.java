@@ -1,6 +1,8 @@
 package csm117.whatshappening;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -11,6 +13,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,7 +33,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //show error dialog if GoolglePlayServices not available
+        //show error dialog if GooglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
@@ -53,6 +58,16 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+
+        final FloatingActionButton floatingAdd = (FloatingActionButton) findViewById(R.id.floatingAdd);
+        assert floatingAdd != null;
+        floatingAdd.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent inputWindow = new Intent(getApplicationContext(), InputActivity.class);
+                    startActivity(inputWindow);
+            }
+        });
+
     }
 
     @Override
