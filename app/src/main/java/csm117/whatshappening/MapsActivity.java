@@ -12,6 +12,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.view.View;
+<<<<<<< HEAD
+=======
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+>>>>>>> 16a0053e5de8fd8216554be280cec515464527dd
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -74,6 +80,22 @@ public class MapsActivity extends FragmentActivity implements
                 startActivity(inputWindow);
             }
         });
+
+        String newString;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                newString= null;
+            } else {
+                newString= extras.getString("hello");
+                TextView textView = (TextView) findViewById(R.id.viewMessage);
+                textView.setText(newString);
+            }
+        } else {
+            newString= (String) savedInstanceState.getSerializable("hello");
+            TextView textView = (TextView) findViewById(R.id.viewMessage);
+            textView.setText(newString);
+        }
     }
 
     @Override

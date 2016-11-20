@@ -32,7 +32,7 @@ class LocationNoteList(APIView):
     """
     def get(self, request, format=None):
         location_notes = LocationNote.objects.all()
-        serializer = LocationNoteSerializer(location_notes, many=True)
+        serializer = LocationNoteSerializer(location_notes, context={'request': request}, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -54,7 +54,7 @@ class LocationNoteDetail(APIView):
 
     def get(self, request, pk, format=None):
         location_note = self.get_object(pk)
-        serializer = LocationNoteSerializer(location_note)
+        serializer = LocationNoteSerializer(location_note, context={'request': request})
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
