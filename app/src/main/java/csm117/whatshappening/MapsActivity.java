@@ -2,6 +2,7 @@ package csm117.whatshappening;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -58,15 +60,31 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
 
-        final Button floatingAdd = (Button) findViewById(R.id.floatingAdd);
+        // Create FAB variable, implement an OnClickListener and cause it to create an intent and start the InputActivity
+        final FloatingActionButton floatingAdd = (FloatingActionButton) findViewById(R.id.floatingAdd);
         assert floatingAdd != null;
         floatingAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent inputWindow = new Intent(getApplicationContext(), InputActivity.class);
-                    startActivity(inputWindow);
+                startActivity(inputWindow);
             }
         });
 
+        String newString;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                newString= null;
+            } else {
+                newString= extras.getString("hello");
+                TextView textView = (TextView) findViewById(R.id.viewMessage);
+                textView.setText(newString);
+            }
+        } else {
+            newString= (String) savedInstanceState.getSerializable("hello");
+            TextView textView = (TextView) findViewById(R.id.viewMessage);
+            textView.setText(newString);
+        }
     }
 
     @Override
