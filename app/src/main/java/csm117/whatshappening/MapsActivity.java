@@ -95,6 +95,9 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
 
+        CREATE_NOTE = getString(R.string.create_location_notes);
+        GET_NOTE = getString(R.string.get_location_notes);
+
         // Commented out for now to work on the emulator
         /*Location location = locationManager.getLastKnownLocation(bestProvider);
         Location location = locationManager.getLastKnownLocation(bestProvider);
@@ -138,20 +141,131 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-
-        ArrayList<LatLng> allLonLats = getLocations();
+        final ArrayList<String> eventNames = new ArrayList<String>();
+        ArrayList<LatLng> allLonLats = getLocations(eventNames);
         // add all pre-existing markers to the map
-        Marker[] otherMarkers = addAllMarkers(allLonLats, map);
+        // Marker[] otherMarkers = addAllMarkers(allLonLats, map);
+        int i = 0;
+        for (LatLng lon_lat : allLonLats) {
+            System.out.println(eventNames.get(i));
+            String eventTitle = eventNames.get(i);
+            Marker loc_i = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -117.452905)).title(eventTitle));
+            i++;
+        }
 
         // Test marker
-        Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905))
-                .title("Hello world"));
+        //Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905)).title("Hello world"));
 
         googleMap.setOnMarkerClickListener(this);
+    }
 
-        //test.setTag();
+    /**
+     * Adds all markers corresponding to locations extracted from the database
+     */
+    private Marker[] addAllMarkers(ArrayList<LatLng> locs, GoogleMap map) {
 
-        //googleMap.setOnMarkerClickListener(this);
+        int numMarkers = locs.size();
+        Marker[] mapMarkers = new Marker[numMarkers];
+
+        for (int i = 0; i < numMarkers; i++) {
+            Marker marker_i = map.addMarker(new MarkerOptions().position(locs.get(i)));
+            mapMarkers[i] = marker_i;
+        }
+
+        return mapMarkers;
+    }
+
+    /**
+     * Retrieve all the locations of events posted from other users
+     * from the database;
+     * returns an arraylist of longitude and latitude for each of the locations
+     */
+    private ArrayList<LatLng> getLocations(final ArrayList<String> eventNames){
+
+        final ArrayList<LatLng> allLatLons = new ArrayList<LatLng>();
+        // final ArrayList<String> eventNames = new ArrayList<String>();
+
+        JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET,
+                GET_NOTE, (String)null,
+                new Response.Listener<JSONArray>()
+                {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        //result.add(response);
+                        Log.d("Response", response.toString());
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject eventInfo = null;
+                            try {
+                                eventInfo = response.getJSONObject(i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            // get the necessary info from each of the JSONObjects
+                            // Variable Names: Title, Description, Latitude, Longitude, etc.
+                            String title = "";
+                            try {
+                                title = eventInfo.getString("title");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                String descrip = eventInfo.getString("description");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            double lat = 0;
+                            try {
+                                lat = eventInfo.getDouble("latitude");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            double lon = 0;
+                            try {
+                                lon = eventInfo.getDouble("longitude");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            // store in allLatLons
+                            LatLng eventLoc = new LatLng(lat, lon);
+                            System.out.println("Event " + i + "Lat: " + lat + " Lon: " + lon);
+
+                            eventNames.add(title);
+                            allLatLons.add(eventLoc);
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Error.Response", error.toString());
+                    }
+                }
+        );
+
+        //////////////////////////////////////////////////////////
+        int socketTimeout = 6000; // 30 seconds. You can change it
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        getRequest.setRetryPolicy(policy);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(getRequest);
+        /////////////////////////////////////////////////////////
+
+        return allLatLons;
+
+    } // end getLocations()
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // When we click a marker, we want a pop up window
+        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
     }
 
     private void createLocation(){
@@ -182,144 +296,6 @@ public class MapsActivity extends FragmentActivity implements
         };
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
-    }
-
-
-
-    /**
-     * Retrieve all the locations of events posted from other users
-     * from the database;
-     * returns an arraylist of longitude and latitude for each of the locations
-     */
-    private ArrayList<LatLng> getLocations(){
-
-        final ArrayList<JSONArray> result = new ArrayList<JSONArray>();
-
-        JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET,
-                GET_NOTE, (String)null,
-                new Response.Listener<JSONArray>()
-                {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        result.add(response);
-                        Log.d("Response", response.toString());
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Error.Response", error.toString());
-                    }
-                }
-        );
-
-        // store all the lat/lons for pre-existing events in databse
-        ArrayList<LatLng> allLatLons = new ArrayList<LatLng>();
-        JSONArray allEvents = result.get(0);
-        for (int i = 0; i < allEvents.length(); i++) {
-            JSONObject eventInfo = null;
-            try {
-                eventInfo = allEvents.getJSONObject(i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            // get the necessary info from each of the JSONObjects
-            // Variable Names: Title, Description, Latitude, Longitude, etc.
-            try {
-                String title    = eventInfo.getString("Title");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                String descrip  = eventInfo.getString("Description");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            int lat         = 0;
-            try {
-                lat = eventInfo.getInt("Latitude");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            int lon         = 0;
-            try {
-                lon = eventInfo.getInt("Longitude");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            // store in allLatLons
-            LatLng eventLoc = new LatLng(lat, lon);
-            allLatLons.add(eventLoc);
-        }
-
-
-        //////////////////////////////////////////////////////////
-        int socketTimeout = 6000; // 30 seconds. You can change it
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        getRequest.setRetryPolicy(policy);
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(getRequest);
-        /////////////////////////////////////////////////////////
-
-        return allLatLons;
-
-    } // end getLocations()
-
-
-    /**
-     * Adds all markers corresponding to locations extracted from the database
-     */
-    private Marker[] addAllMarkers(ArrayList<LatLng> locs, GoogleMap map) {
-
-        int numMarkers = locs.size();
-        Marker[] mapMarkers = new Marker[numMarkers];
-
-        for (int i = 0; i < numMarkers; i++) {
-            Marker marker_i = map.addMarker(new MarkerOptions().position(locs.get(i)));
-            mapMarkers[i] = marker_i;
-        }
-
-
-        return mapMarkers;
-    } // end addAllMarkers()
-
-
-    /*
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-
-        // Retrieve the data from the marker.
-        Integer clickCount = (Integer) marker.getTag();
-
-        // Check if a click count was set, then display the click count.
-        if (clickCount != null) {
-            clickCount = clickCount + 1;
-            marker.setTag(clickCount);
-            Toast.makeText(this,
-                    marker.getTitle() +
-                            " has been clicked " + clickCount + " times.",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        // Return false means we have not consumed event, default behavior will continue
-        return false;
-    }
-    */
-        // Test marker
-
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-        // When we click a marker, we want a pop up window
-        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
-        // Return false means we have not consumed event, default behavior will continue
-        return false;
     }
 
     @Override
