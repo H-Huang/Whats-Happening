@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.fitness.request.ReadRawRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -128,8 +129,6 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onMarkerClick(final Marker marker) {
         // When we click a marker, we want a pop up window
-        View HideFloating = findViewById(R.id.floatingAdd);
-        HideFloating.setVisibility(View.GONE);
         startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
         // Return false means we have not consumed event, default behavior will continue
         return false;
