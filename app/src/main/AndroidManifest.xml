@@ -47,7 +47,8 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
 
-        <activity android:name=".InputActivity"></activity>
+        <activity android:name=".InputActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
 
         <activity android:name=".MarkerActivity"
             android:theme="@style/PopUpTheme"> </activity>
