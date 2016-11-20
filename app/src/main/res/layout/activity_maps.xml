@@ -20,13 +20,14 @@
     -->
 
     <android.support.design.widget.FloatingActionButton
-            android:src="@drawable/ic_plus_circle_outline"
-            android:layout_margin="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:id="@+id/floatingAdd" />
+    android:src="@drawable/ic_plus_circle_outline"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    android:layout_marginBottom="32dp"
+    android:layout_marginRight="16dp"
+    android:id="@+id/floatingAdd"  />
 
     <!--
     </android.support.design.widget.CoordinatorLayout>
