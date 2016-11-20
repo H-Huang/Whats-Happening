@@ -12,12 +12,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.view.View;
-<<<<<<< HEAD
-=======
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
->>>>>>> 16a0053e5de8fd8216554be280cec515464527dd
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -127,6 +124,8 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onMarkerClick(final Marker marker) {
         // When we click a marker, we want a pop up window
+        View HideFloating = findViewById(R.id.floatingAdd);
+        HideFloating.setVisibility(View.GONE);
         startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
         // Return false means we have not consumed event, default behavior will continue
         return false;
