@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo $1 #projectName
 echo $2 #projectUser
 echo $3 #password
@@ -14,7 +16,7 @@ sudo apt-get install python3.4-dev -y
 
 # Nginx setup
 sudo apt-get install nginx -y
-sudo mv /vagrant/serverProvision/$1 /etc/nginx/sites-available/$1
+sudo cp /vagrant/serverProvision/$1 /etc/nginx/sites-available/$1
 sudo ln -s /etc/nginx/sites-available/$1 /etc/nginx/sites-enabled
 sudo service nginx restart
 
