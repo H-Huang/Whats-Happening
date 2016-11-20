@@ -5,4 +5,9 @@
     <string name="get_location_notes">http://192.168.11.11/locationnotes/</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+
+    <string name="latText">Latitude</string>
+    <string name="longText">Longitude</string>
+    <string name="fakelatValue">9</string>
+    <string name="fakelongValue">8</string>
 </resources>

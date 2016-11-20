@@ -34,6 +34,8 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback {
 
     GoogleMap googleMap;
+    double latitude;
+    double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements
         floatingAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent inputWindow = new Intent(getApplicationContext(), InputActivity.class);
+                inputWindow.putExtra("paramLat", "" + latitude);
+                inputWindow.putExtra("paramLong", "" + longitude);
                 startActivity(inputWindow);
             }
         });
@@ -98,8 +102,8 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
         TextView locationTv = (TextView) findViewById(R.id.latlongLocation);
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         //googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
