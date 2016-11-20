@@ -59,12 +59,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
 
+        // Create FAB variable, implement an OnClickListener and cause it to create an intent and start the InputActivity
         final FloatingActionButton floatingAdd = (FloatingActionButton) findViewById(R.id.floatingAdd);
         assert floatingAdd != null;
         floatingAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent inputWindow = new Intent(getApplicationContext(), InputActivity.class);
-                    startActivity(inputWindow);
+                startActivity(inputWindow);
             }
         });
 

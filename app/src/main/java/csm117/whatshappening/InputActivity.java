@@ -17,7 +17,7 @@ public class InputActivity extends AppCompatActivity {
     // Function to display the message that the user enters
     public final static String EXTRA_MESSAGE = "hello";
     public void sendMessage(View view) {
-        Intent display = new Intent(this, MainActivity.class);
+        Intent display = new Intent(this, MapsActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_message);
         String message = editText.getText().toString();
         display.putExtra(EXTRA_MESSAGE, message);
