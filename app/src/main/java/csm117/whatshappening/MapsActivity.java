@@ -11,22 +11,24 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
-public class MapsActivity extends FragmentActivity implements LocationListener {
+public class MapsActivity extends FragmentActivity implements
+        OnMarkerClickListener,
+        LocationListener,
+        OnMapReadyCallback {
 
     GoogleMap googleMap;
 
@@ -41,6 +43,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = supportMapFragment.getMap();
+        // Sync map, implement onMapReady
+        supportMapFragment.getMapAsync(this);
         googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -53,11 +57,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             }
         }
 
+        /*
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        */
 
         // Create FAB variable, implement an OnClickListener and cause it to create an intent and start the InputActivity
         final FloatingActionButton floatingAdd = (FloatingActionButton) findViewById(R.id.floatingAdd);
@@ -68,7 +74,6 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 startActivity(inputWindow);
             }
         });
-
     }
 
     @Override
@@ -77,10 +82,32 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
-        googleMap.addMarker(new MarkerOptions().position(latLng));
+        //googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
+    }
+
+    // onMapReady, load marker
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+
+        // Test marker
+        Marker test = map.addMarker(new MarkerOptions()
+                .position(new LatLng(34.071413, -118.452905))
+                .title("Hello world"))
+                ;
+
+        googleMap.setOnMarkerClickListener(this);
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // When we click a marker, we want a pop up window
+        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
     }
 
     @Override
