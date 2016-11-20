@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class LocationNote(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -7,3 +8,5 @@ class LocationNote(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     upvotes = models.IntegerField()
+    user = models.ForeignKey(User, default=None, null=True, blank=True)
+
