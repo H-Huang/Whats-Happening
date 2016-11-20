@@ -26,8 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:id="@+id/floatingAdd"
-            app:backgroundTint="@android:color/holo_blue_dark" />
+            android:id="@+id/floatingAdd" />
 
     <!--
     </android.support.design.widget.CoordinatorLayout>
@@ -44,6 +43,17 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp" />
 
+    <TextView
+        android:id="@+id/viewMessage"
+        android:layout_below="@id/latlongLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textColor="#ffffffff"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" />
+        />
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"

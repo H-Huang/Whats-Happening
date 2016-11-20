@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -68,6 +69,21 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             }
         });
 
+        String newString;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                newString= null;
+            } else {
+                newString= extras.getString("hello");
+                TextView textView = (TextView) findViewById(R.id.viewMessage);
+                textView.setText(newString);
+            }
+        } else {
+            newString= (String) savedInstanceState.getSerializable("hello");
+            TextView textView = (TextView) findViewById(R.id.viewMessage);
+            textView.setText(newString);
+        }
     }
 
     @Override

@@ -14,4 +14,12 @@ public class InputActivity extends AppCompatActivity {
         setContentView(R.layout.activity_input);
     }
 
+    public final static String EXTRA_MESSAGE = "hello";
+    public void sendMessage(View view) {
+        Intent send = new Intent(this, MapsActivity.class);
+        EditText editText = (EditText) findViewById(R.id.edit_message);
+        String message = editText.getText().toString();
+        send.putExtra(EXTRA_MESSAGE, message);
+        startActivity(send);
+    }
 }
