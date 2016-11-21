@@ -34,7 +34,7 @@
             android:inputType="textPersonName"
             android:text="Create a comment"
             android:ems="10"
-            android:id="@+id/create_comment"
+            android:id="@+id/create"
             android:layout_marginTop="26dp"
             android:layout_below="@+id/back_button"
             android:layout_centerHorizontal="true"
@@ -49,6 +49,13 @@
             android:layout_alignTop="@+id/create_comment"
             android:layout_alignLeft="@+id/back_button"
             android:layout_alignStart="@+id/back_button"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="Notes:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
             android:layout_weight="1" />
 
         <ListView

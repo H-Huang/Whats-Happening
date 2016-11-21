@@ -68,6 +68,7 @@ public class MarkerActivity extends MapsActivity{
                 Intent i = new Intent(getApplicationContext(),CommentActivity.class);
                 i.putExtra("location_id", id_final);
                 startActivity(i);
+                finish();
             }
         });
     }

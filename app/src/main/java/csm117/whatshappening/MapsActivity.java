@@ -86,7 +86,7 @@ public class MapsActivity extends FragmentActivity implements
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
 
-        googleMap.setMyLocationEnabled(false);
+        googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
@@ -100,11 +100,11 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
 
-        /*Location location = locationManager.getLastKnownLocation(bestProvider);
-        if (location != null) {
-            onLocationChanged(location);
-        }
-        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);*/
+        Location location = locationManager.getLastKnownLocation(bestProvider);
+//        if (location != null) {
+//            onLocationChanged(location);
+//        }
+        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
 
         markerMap = new HashMap<Marker, Integer>();
         CREATE_NOTE = getString(R.string.create_location_notes);

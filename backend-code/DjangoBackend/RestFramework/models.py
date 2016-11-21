@@ -15,4 +15,4 @@ class LocationNote(models.Model):
 
 class Comment(models.Model):
     text = models.CharField(max_length=100, blank=True, default='')
-    belongsToID = models.IntegerField(default=-1)
+    belongsToID = models.CharField(max_length=100, blank=True, default='')
