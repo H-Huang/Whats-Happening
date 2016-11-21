@@ -54,37 +54,42 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         OnMarkerClickListener{
 
-
+    // Strings for IP address
     private String CREATE_NOTE = "";
     private String GET_NOTE = "";
 
+    // Declaration for use with Google Maps API
     GoogleMap googleMap;
-
     double longitude, latitude;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
+
+    // The magic fix for marker popup window
+    HashMap<Marker, Integer> markerMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //show error dialog if GooglePlayServices not available
+        // Show error dialog if GooglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
         setContentView(R.layout.activity_maps);
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = supportMapFragment.getMap();
+
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
+
         googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
-
 
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(this,
@@ -95,9 +100,15 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
 
+        Location location = locationManager.getLastKnownLocation(bestProvider);
+        if (location != null) {
+            onLocationChanged(location);
+        }
+        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+
+        markerMap = new HashMap<Marker, Integer>();
         CREATE_NOTE = getString(R.string.create_location_notes);
         GET_NOTE = getString(R.string.get_location_notes);
-
 
         final ArrayList<String> eventNames = new ArrayList<String>();
         final ArrayList<LatLng> allLonLats = getLocations(eventNames);
@@ -105,24 +116,19 @@ public class MapsActivity extends FragmentActivity implements
         // Marker[] otherMarkers = addAllMarkers(allLonLats, googleMap);
 
         int i = 0;
-        System.out.println("IN ON CREATE -- ABOUT TO START ITERATION OF LON LATS");
-        System.out.println("Size of the location arraylist: " + allLonLats.size());
         for (LatLng lon_lat : allLonLats) {
             String eventTitle = eventNames.get(i);
-            System.out.println("ITERATION " + i + "Event name: " + eventTitle);
             Marker loc_i = googleMap.addMarker(new MarkerOptions().position(lon_lat)
                     .title(eventTitle));
             i++;
         }
 
         // Commented out for now to work on the emulator
-        /*Location location = locationManager.getLastKnownLocation(bestProvider);
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
-        */
 
         // Create FAB variable, implement an OnClickListener
         // and cause it to create an intent and start the InputActivity
@@ -134,12 +140,9 @@ public class MapsActivity extends FragmentActivity implements
                 inputWindow.putExtra("paramLat", "" + latitude);
                 inputWindow.putExtra("paramLong", "" + longitude);
                 startActivity(inputWindow);
+                finish();
             }
         });
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -148,7 +151,6 @@ public class MapsActivity extends FragmentActivity implements
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
-        //googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
@@ -158,27 +160,20 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-
-        // Test marker
-        //Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905)).title("Hello world"));
-
+        // Set a Marker Listener, not sure if onMapReady is necessary for this
         googleMap.setOnMarkerClickListener(this);
     }
 
-    /**
-     * Adds all markers corresponding to locations extracted from the database
-     */
-    private Marker[] addAllMarkers(ArrayList<LatLng> locs, GoogleMap map) {
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // When we click a marker, we want a pop up window
+        Intent intent = new Intent(getApplicationContext(), MarkerActivity.class);
+        System.out.println("TESTTTTTT==============" + markerMap.get(marker));
+        intent.putExtra("id", markerMap.get(marker));
+        startActivity(intent);
 
-        int numMarkers = locs.size();
-        Marker[] mapMarkers = new Marker[numMarkers];
-
-        for (int i = 0; i < numMarkers; i++) {
-            Marker marker_i = map.addMarker(new MarkerOptions().position(locs.get(i)));
-            mapMarkers[i] = marker_i;
-        }
-
-        return mapMarkers;
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
     }
 
     /**
@@ -239,8 +234,12 @@ public class MapsActivity extends FragmentActivity implements
                             eventNames.add(title);
                             allLatLons.add(eventLoc);
 
-                            googleMap.addMarker(new MarkerOptions().position(eventLoc)
+                            // Add marker to the map
+                            Marker marker_i = googleMap.addMarker(new MarkerOptions().position(eventLoc)
                                     .title(title));
+
+                            // HashMap markers
+                            markerMap.put(marker_i, i + 1);
                         }
                     }
                 },
@@ -269,44 +268,6 @@ public class MapsActivity extends FragmentActivity implements
         return allLatLons;
 
     } // end getLocations()
-
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-        // When we click a marker, we want a pop up window
-        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
-        // Return false means we have not consumed event, default behavior will continue
-        return false;
-    }
-
-    private void createLocation(){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CREATE_NOTE,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MapsActivity.this,response,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MapsActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                HashMap<String, String> params = new HashMap<String, String>();
-                // Just 5 parameters for hashing
-                params.put("created", "2016-11-13T03:53:17.826999Z");
-                params.put("description", "plz-post");
-                params.put("latitude", "100");
-                params.put("longitude", "200");
-                params.put("upvotes", "30");
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
 
     @Override
     public void onProviderDisabled(String provider) {
