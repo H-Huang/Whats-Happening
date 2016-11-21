@@ -255,6 +255,14 @@ public class MapsActivity extends FragmentActivity implements
     } // end getLocations()
 
     @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // When we click a marker, we want a pop up window
+        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
+    }
+
+    @Override
     public void onProviderDisabled(String provider) {
         // TODO Auto-generated method stub
     }
