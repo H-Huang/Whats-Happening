@@ -80,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements
         googleMap = supportMapFragment.getMap();
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
-        googleMap.setMyLocationEnabled(false);
+        googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
@@ -116,13 +116,12 @@ public class MapsActivity extends FragmentActivity implements
         }
 
         // Commented out for now to work on the emulator
-        /*Location location = locationManager.getLastKnownLocation(bestProvider);
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
-        */
+
 
         // Create FAB variable, implement an OnClickListener
         // and cause it to create an intent and start the InputActivity
