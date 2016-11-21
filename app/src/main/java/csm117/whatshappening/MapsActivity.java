@@ -63,6 +63,9 @@ public class MapsActivity extends FragmentActivity implements
     double longitude, latitude;
     private GoogleApiClient client;
 
+    // The magic fix for marker popup window
+    HashMap<Marker, Integer> markerMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +85,7 @@ public class MapsActivity extends FragmentActivity implements
 
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
+
         googleMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -96,15 +100,13 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
 
-        // Commented out for now to work on the emulator
-        /*Location location = locationManager.getLastKnownLocation(bestProvider);
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
-        */
 
+        markerMap = new HashMap<Marker, Integer>();
         CREATE_NOTE = getString(R.string.create_location_notes);
         GET_NOTE = getString(R.string.get_location_notes);
 
@@ -138,6 +140,7 @@ public class MapsActivity extends FragmentActivity implements
                 inputWindow.putExtra("paramLat", "" + latitude);
                 inputWindow.putExtra("paramLong", "" + longitude);
                 startActivity(inputWindow);
+                finish();
             }
         });
     }
@@ -164,7 +167,10 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onMarkerClick(final Marker marker) {
         // When we click a marker, we want a pop up window
-        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
+        Intent intent = new Intent(getApplicationContext(), MarkerActivity.class);
+        System.out.println("TESTTTTTT==============" + markerMap.get(marker));
+        intent.putExtra("id", markerMap.get(marker));
+        startActivity(intent);
 
         // Return false means we have not consumed event, default behavior will continue
         return false;
@@ -228,8 +234,12 @@ public class MapsActivity extends FragmentActivity implements
                             eventNames.add(title);
                             allLatLons.add(eventLoc);
 
-                            googleMap.addMarker(new MarkerOptions().position(eventLoc)
+                            // Add marker to the map
+                            Marker marker_i = googleMap.addMarker(new MarkerOptions().position(eventLoc)
                                     .title(title));
+
+                            // HashMap markers
+                            markerMap.put(marker_i, i + 1);
                         }
                     }
                 },
@@ -258,14 +268,6 @@ public class MapsActivity extends FragmentActivity implements
         return allLatLons;
 
     } // end getLocations()
-
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-        // When we click a marker, we want a pop up window
-        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
-        // Return false means we have not consumed event, default behavior will continue
-        return false;
-    }
 
     @Override
     public void onProviderDisabled(String provider) {

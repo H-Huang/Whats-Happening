@@ -56,6 +56,9 @@ public class InputActivity extends AppCompatActivity {
                 final String message = stringMessage.getText().toString();
 
                 createLocation(title, message, finallatValue, finallongValue);
+                Intent redirect = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(redirect);
+                finish();
             }
         });
     }
@@ -65,13 +68,13 @@ public class InputActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(InputActivity.this,response,Toast.LENGTH_LONG).show();
+                        //Toast.makeText(InputActivity.this,response,Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(InputActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                        //Toast.makeText(InputActivity.this,error.toString(),Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override
