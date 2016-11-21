@@ -6,22 +6,41 @@
 
     <TextView
         android:text="Title"
+        android:background="#3B5998"
+        android:textColor="#FFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:id="@+id/markerTitle"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:text="Post Description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:id="@+id/markerContent"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:layout_margin="20dp"
+        android:layout_marginTop="44dp"
+        android:textSize="18sp"
         android:layout_below="@+id/markerTitle"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="31dp"
+        android:id="@+id/comments" />
+
 </RelativeLayout>

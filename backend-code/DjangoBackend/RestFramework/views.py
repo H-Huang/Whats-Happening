@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User, Group
-from RestFramework.models import LocationNote
+from RestFramework.models import LocationNote, Comment
 
 from rest_framework import viewsets
 
-from RestFramework.serializers import UserSerializer, GroupSerializer, LocationNoteSerializer
+from RestFramework.serializers import UserSerializer, GroupSerializer, LocationNoteSerializer, CommentSerializer
 
 from django.http import Http404
 from rest_framework.views import APIView
@@ -69,3 +69,19 @@ class LocationNoteDetail(APIView):
         location_note = self.get_object(pk)
         location_note.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CommentList(APIView):
+    """
+    List all LocationNotes, or create a new LocationNote.
+    """
+    def get(self, request, format=None):
+        comments = Comment.objects.all()
+        serializer = CommentSerializer(comments, context={'request': request}, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

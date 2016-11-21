@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 
-from RestFramework.models import LocationNote
+from RestFramework.models import LocationNote, Comment
 
 from rest_framework import serializers
 
@@ -20,4 +20,10 @@ class LocationNoteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = LocationNote
-        fields = ('created', 'title', 'description', 'latitude', 'longitude', 'upvotes', 'user')
+        fields = ('id', 'created', 'title', 'description', 'latitude', 'longitude', 'upvotes', 'user')
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'text', 'belongsToID')

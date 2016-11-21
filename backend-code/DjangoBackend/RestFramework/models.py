@@ -12,3 +12,7 @@ class LocationNote(models.Model):
 
     def __str__(self):
         return '%s' % (self.title)
+
+class Comment(models.Model):
+    text = models.CharField(max_length=100, blank=True, default='')
+    belongsToID = models.IntegerField(default=-1)

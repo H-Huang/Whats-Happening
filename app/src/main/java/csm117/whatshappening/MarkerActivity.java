@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -42,6 +44,10 @@ public class MarkerActivity extends MapsActivity{
         Intent getId = getIntent();
         Integer id = 0;
         id = getId.getIntExtra("id", 0);
+
+        final Integer id_final = getId.getIntExtra("id", 0);
+
+
         // Append ID
         GET_NOTE = getString(R.string.get_location_notes) + id  + '/';
         getLocations(GET_NOTE);
@@ -54,6 +60,16 @@ public class MarkerActivity extends MapsActivity{
         int width = display_metrics.widthPixels;
 
         getWindow().setLayout((int) (width * .7), (int) (height * .7));
+
+        final Button comment_redirect = (Button) findViewById(R.id.comments);
+        assert comment_redirect != null;
+        comment_redirect.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),CommentActivity.class);
+                i.putExtra("location_id", id_final);
+                startActivity(i);
+            }
+        });
     }
 
     private void getLocations(String url){
