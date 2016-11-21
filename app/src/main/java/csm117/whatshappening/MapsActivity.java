@@ -54,37 +54,40 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         OnMarkerClickListener{
 
-
+    // Strings for IP address
     private String CREATE_NOTE = "";
     private String GET_NOTE = "";
 
+    // Declaration for use with Google Maps API
     GoogleMap googleMap;
-
     double longitude, latitude;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //show error dialog if GooglePlayServices not available
+        // Show error dialog if GooglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
         setContentView(R.layout.activity_maps);
         SupportMapFragment supportMapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = supportMapFragment.getMap();
+
         // Sync map, implement onMapReady
         supportMapFragment.getMapAsync(this);
+
+        // Can't set this to true without runtime permissions
         googleMap.setMyLocationEnabled(false);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, true);
-
 
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(this,
@@ -95,26 +98,6 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
 
-        CREATE_NOTE = getString(R.string.create_location_notes);
-        GET_NOTE = getString(R.string.get_location_notes);
-
-
-        final ArrayList<String> eventNames = new ArrayList<String>();
-        final ArrayList<LatLng> allLonLats = getLocations(eventNames);
-        // add all pre-existing markers to the map
-        // Marker[] otherMarkers = addAllMarkers(allLonLats, googleMap);
-
-        int i = 0;
-        System.out.println("IN ON CREATE -- ABOUT TO START ITERATION OF LON LATS");
-        System.out.println("Size of the location arraylist: " + allLonLats.size());
-        for (LatLng lon_lat : allLonLats) {
-            String eventTitle = eventNames.get(i);
-            System.out.println("ITERATION " + i + "Event name: " + eventTitle);
-            Marker loc_i = googleMap.addMarker(new MarkerOptions().position(lon_lat)
-                    .title(eventTitle));
-            i++;
-        }
-
         // Commented out for now to work on the emulator
         /*Location location = locationManager.getLastKnownLocation(bestProvider);
         Location location = locationManager.getLastKnownLocation(bestProvider);
@@ -123,6 +106,22 @@ public class MapsActivity extends FragmentActivity implements
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
         */
+
+        CREATE_NOTE = getString(R.string.create_location_notes);
+        GET_NOTE = getString(R.string.get_location_notes);
+
+        final ArrayList<String> eventNames = new ArrayList<String>();
+        final ArrayList<LatLng> allLonLats = getLocations(eventNames);
+        // add all pre-existing markers to the map
+        // Marker[] otherMarkers = addAllMarkers(allLonLats, googleMap);
+
+        int i = 0;
+        for (LatLng lon_lat : allLonLats) {
+            String eventTitle = eventNames.get(i);
+            Marker loc_i = googleMap.addMarker(new MarkerOptions().position(lon_lat)
+                    .title(eventTitle));
+            i++;
+        }
 
         // Create FAB variable, implement an OnClickListener
         // and cause it to create an intent and start the InputActivity
@@ -136,10 +135,6 @@ public class MapsActivity extends FragmentActivity implements
                 startActivity(inputWindow);
             }
         });
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -157,27 +152,17 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-
-        // Test marker
-        //Marker test = map.addMarker(new MarkerOptions().position(new LatLng(34.071413, -118.452905)).title("Hello world"));
-
+        // Set a Marker Listener, not sure if onMapReady is necessary for this
         googleMap.setOnMarkerClickListener(this);
     }
 
-    /**
-     * Adds all markers corresponding to locations extracted from the database
-     */
-    private Marker[] addAllMarkers(ArrayList<LatLng> locs, GoogleMap map) {
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // When we click a marker, we want a pop up window
+        startActivity(new Intent(getApplicationContext(), MarkerActivity.class));
 
-        int numMarkers = locs.size();
-        Marker[] mapMarkers = new Marker[numMarkers];
-
-        for (int i = 0; i < numMarkers; i++) {
-            Marker marker_i = map.addMarker(new MarkerOptions().position(locs.get(i)));
-            mapMarkers[i] = marker_i;
-        }
-
-        return mapMarkers;
+        // Return false means we have not consumed event, default behavior will continue
+        return false;
     }
 
     /**
