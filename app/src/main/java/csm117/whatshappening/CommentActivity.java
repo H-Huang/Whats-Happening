@@ -73,6 +73,8 @@ public class CommentActivity extends AppCompatActivity {
                 final String comment_text = comment_edit_text.getText().toString();
                 makeComment(create_comments_url, comment_text, id_string);
                 Intent i = new Intent(getApplicationContext(),CommentActivity.class);
+                Integer id_final = Integer.parseInt(id_string);
+                i.putExtra("location_id", id_final);
                 startActivity(i);
                 finish();
             }

@@ -101,9 +101,9 @@ public class MapsActivity extends FragmentActivity implements
         }
 
         Location location = locationManager.getLastKnownLocation(bestProvider);
-//        if (location != null) {
-//            onLocationChanged(location);
-//        }
+        if (location != null) {
+            onLocationChanged(location);
+        }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
 
         markerMap = new HashMap<Marker, Integer>();
@@ -140,13 +140,11 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        TextView locationTv = (TextView) findViewById(R.id.latlongLocation);
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-        locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
     }
 
     // onMapReady, load marker
