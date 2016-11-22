@@ -53,8 +53,9 @@
 
         <activity
             android:name=".MarkerActivity"
-            android:theme="@style/PopUpTheme"></activity>
-        <activity android:name=".CommentActivity"></activity>
+            android:theme="@style/PopUpTheme" />
+        <activity android:name=".CommentActivity" />
+        <activity android:name=".NewsfeedActivity"></activity>
     </application>
 
 </manifest>

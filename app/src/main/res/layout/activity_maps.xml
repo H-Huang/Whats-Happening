@@ -19,16 +19,6 @@
         android:layout_height="match_parent" >
     -->
 
-    <android.support.design.widget.FloatingActionButton
-    android:src="@drawable/ic_plus_circle_outline"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentRight="true"
-    android:layout_marginBottom="32dp"
-    android:layout_marginRight="16dp"
-    android:id="@+id/floatingAdd"  />
-
     <!--
     </android.support.design.widget.CoordinatorLayout>
     -->
@@ -51,6 +41,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="csm117.whatshappening.MapsActivity"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <android.support.design.widget.FloatingActionButton
+    android:src="@drawable/ic_plus_circle_outline"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+        android:id="@+id/floatingAdd"
+        android:layout_below="@+id/latlongLocation"
+        android:layout_alignLeft="@+id/newsfeed"
+        android:layout_alignStart="@+id/newsfeed" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        map:srcCompat="@android:drawable/star_big_off"
+        android:id="@+id/newsfeed"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/floatingAdd"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

@@ -136,6 +136,16 @@ public class MapsActivity extends FragmentActivity implements
                 finish();
             }
         });
+
+        final FloatingActionButton newsfeed = (FloatingActionButton) findViewById(R.id.newsfeed);
+        assert newsfeed != null;
+        newsfeed.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent inputWindow = new Intent(getApplicationContext(), NewsfeedActivity.class);
+                startActivity(inputWindow);
+                finish();
+            }
+        });
     }
 
     @Override
