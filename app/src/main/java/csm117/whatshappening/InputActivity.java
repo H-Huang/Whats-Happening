@@ -61,6 +61,17 @@ public class InputActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //back button
+        final Button map_redirect = (Button) findViewById(R.id.back_button);
+        assert map_redirect != null;
+        map_redirect.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),MapsActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
     private void createLocation(final String stringTitle, final String stringDescription, final String latLocation, final String longLocation){

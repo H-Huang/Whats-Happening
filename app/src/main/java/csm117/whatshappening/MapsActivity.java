@@ -228,6 +228,13 @@ public class MapsActivity extends FragmentActivity implements
                                 e.printStackTrace();
                             }
 
+                            int id_num = 0;
+                            try{
+                                id_num = Integer.parseInt(eventInfo.getString("id"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                             // store in allLatLons
                             LatLng eventLoc = new LatLng(lat, lon);
                             System.out.println("Event " + i + " Lat: " + lat + " Lon: " + lon);
@@ -240,7 +247,7 @@ public class MapsActivity extends FragmentActivity implements
                                     .title(title));
 
                             // HashMap markers
-                            markerMap.put(marker_i, i + 1);
+                            markerMap.put(marker_i, id_num);
                         }
                     }
                 },
