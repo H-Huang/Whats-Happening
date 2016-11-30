@@ -2,13 +2,16 @@ package csm117.whatshappening;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -18,6 +21,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,11 +29,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NewsfeedActivity extends AppCompatActivity {
 
     public Activity activity = null;
     ListView location_note_list_view;
+    HashMap<String, String> listMap = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +59,20 @@ public class NewsfeedActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        location_note_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,int position, long arg3)
+            {
+                //Toast.makeText(NewsfeedActivity.this, "" + this, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), MarkerActivity.class);
+                intent.putExtra("id", Integer.parseInt(listMap.get("" + position)));
+                startActivity(intent);
+            }
+        });
     }
+
 
 
     private void getLocationNotes(String url){
@@ -68,9 +88,11 @@ public class NewsfeedActivity extends AppCompatActivity {
                         ArrayList<String> listItems=new ArrayList<String>();
 
                         try {
-                            for (int i = 0; i < response.length(); i++){
+                            int length = response.length();
+                            for (int i = 0; i < length; i++){
                                 JSONObject obj = response.getJSONObject(i);
                                 listItems.add(obj.getString("title") + ": " + obj.getString("description"));
+                                listMap.put(Integer.toString(length - 1 - i), obj.getString("id"));
                             }
 
                             //want the recently created ones to appear at the top

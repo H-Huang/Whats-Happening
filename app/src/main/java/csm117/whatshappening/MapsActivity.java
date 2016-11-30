@@ -169,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements
     public boolean onMarkerClick(final Marker marker) {
         // When we click a marker, we want a pop up window
         Intent intent = new Intent(getApplicationContext(), MarkerActivity.class);
-        System.out.println("TESTTTTTT==============" + markerMap.get(marker));
+        //System.out.println("TESTTTTTT==============" + markerMap.get(marker));
         intent.putExtra("id", markerMap.get(marker));
         startActivity(intent);
 

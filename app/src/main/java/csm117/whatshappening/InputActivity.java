@@ -92,7 +92,6 @@ public class InputActivity extends AppCompatActivity {
             protected Map<String,String> getParams(){
                 HashMap<String, String> params = new HashMap<String, String>();
                 // Just 5 parameters for hashing
-                params.put("created", "2016-11-13T03:53:17.826999Z");
                 params.put("title", stringTitle);
                 params.put("description", stringDescription);
                 params.put("latitude", latLocation);
